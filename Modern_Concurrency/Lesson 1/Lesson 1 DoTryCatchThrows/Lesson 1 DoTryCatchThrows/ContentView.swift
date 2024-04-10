@@ -80,11 +80,13 @@ final class DoTryCatchThrowsViewModel: ObservableObject {
             print("When error is thrown, it will not even run this line")
             self.title = title
             
-            let title4 = try manager.getTitle4()
-            self.title = title4
-            print("Setting title 4")
+            if let title4 = try? manager.getTitle4() {
+                self.title = title4
+                print("Setting title 4")
+            }
             
-            let title5 = try? manager.getTitle5()
+            // This will execute even if the getTitle4 is throwing error, because it is marked as try? 
+            let title5 = try manager.getTitle5()
             self.title = title5 ?? "NA"
             print("Setting title 5")
         } catch {
