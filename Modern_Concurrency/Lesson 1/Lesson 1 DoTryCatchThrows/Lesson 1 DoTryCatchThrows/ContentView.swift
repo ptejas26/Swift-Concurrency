@@ -8,13 +8,13 @@
 import SwiftUI
 
 final class DoTryCatchThrowDataManager {
-    let isActive: Bool = true
+    let isActive: Bool = false
     
-    func getTitle() -> String? {
+    func getTitle() -> (title: String?, error: Error?) {
         if isActive {
-            return "New Text"
+            return ("New Text", nil)
         } else {
-            return nil
+            return (nil, URLError(.badURL))
         }
     }
 }
@@ -24,8 +24,10 @@ final class DoTryCatchThrowsViewModel: ObservableObject {
     let manager = DoTryCatchThrowDataManager()
     
     func fetchText() {
-        if let newTitle = manager.getTitle() {
+        if let newTitle = manager.getTitle().title {
             self.title = newTitle
+        } else if let error = manager.getTitle().error {
+            self.title = error.localizedDescription
         }
     }
 }
