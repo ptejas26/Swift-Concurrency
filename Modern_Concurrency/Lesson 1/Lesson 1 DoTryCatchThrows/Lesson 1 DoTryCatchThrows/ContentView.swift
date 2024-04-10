@@ -3,7 +3,8 @@
 //  Lesson 1 DoTryCatchThrows
 //
 //  Created by Tejas on 2024-04-10.
-// Covers do try catch and throws and rethrows
+//
+
 import SwiftUI
 
 final class DoTryCatchThrowDataManager {
@@ -35,14 +36,14 @@ struct ContentView: View {
     var body: some View {
         
         Text(viewModel.title)
-        .frame(width: 300, height: 300)
-        .background(Color.blue)
-        .foregroundColor(.white)
-        .font(.system(.largeTitle))
-        .onTapGesture {
-            print("This is executing")
-            viewModel.fetchText()
-        }
+            .frame(width: 300, height: 300)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .font(.system(.largeTitle))
+            .onTapGesture {
+                print("This is executing")
+                viewModel.fetchText()
+            }
     }
 }
 
