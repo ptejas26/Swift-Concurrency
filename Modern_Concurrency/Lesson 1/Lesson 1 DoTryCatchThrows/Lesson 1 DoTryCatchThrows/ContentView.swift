@@ -8,7 +8,7 @@
 import SwiftUI
 
 final class DoTryCatchThrowDataManager {
-    let isActive: Bool = false
+    let isActive: Bool = true
     
     func getTitle() -> (title: String?, error: Error?) {
         if isActive {
@@ -31,6 +31,22 @@ final class DoTryCatchThrowDataManager {
             return "New Text 3"
         } else {
             throw URLError(.badURL)
+        }
+    }
+    
+    func getTitle4() throws -> String {
+        if false {
+            return "FINAL TEXT"
+        } else {
+            throw URLError(.badServerResponse)
+        }
+    }
+    
+    func getTitle5() throws -> String {
+        if isActive {
+            return "THIS WILL NEVER BE EXECUTING"
+        } else {
+            throw URLError(.backgroundSessionRequiresSharedContainer)
         }
     }
 }
@@ -63,6 +79,14 @@ final class DoTryCatchThrowsViewModel: ObservableObject {
             let title = try manager.getTitle3()
             print("When error is thrown, it will not even run this line")
             self.title = title
+            
+            let title4 = try manager.getTitle4()
+            self.title = title4
+            print("Setting title 4")
+            
+            let title5 = try? manager.getTitle5()
+            self.title = title5 ?? "NA"
+            print("Setting title 5")
         } catch {
             self.title = error.localizedDescription
         }
