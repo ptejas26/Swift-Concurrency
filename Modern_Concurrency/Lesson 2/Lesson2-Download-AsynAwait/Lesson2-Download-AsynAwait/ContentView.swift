@@ -10,28 +10,49 @@ import Combine
 
 final class DownloadImageAsynAwaitManager {
     
-    let imageURL: URL = URL(string: "https://picsum.photos/seed/picsum/100/100")!
+    let imageURL: URL = URL(string: "https://picsum.photos/id/237/300/300")!
+    
+    func handleResponse(responseData: Data?, urlResponse: URLResponse?) -> UIImage? {
+        guard let data = responseData,
+              let image = UIImage(data: data),
+              let response = urlResponse as? HTTPURLResponse,
+              response.statusCode >= 200 && response.statusCode < 300 else {
+            return nil
+        }
+        return image
+    }
     
     func downloadUsingEscaping(completionHandler: @escaping (UIImage?, Error?) -> ())  {
         
-        URLSession.shared.dataTask(with: URLRequest(url: imageURL)) { responseData, urlResponse, responseError in
-            guard let data = responseData,
-                  let image = UIImage(data: data),
-                  let response = urlResponse as? HTTPURLResponse,
-                  response.statusCode >= 200 && response.statusCode < 300 else {
-                completionHandler(nil, URLError(.badURL))
-                return
+        URLSession.shared.dataTask(with: URLRequest(url: imageURL)) { [weak self] responseData, urlResponse, responseError in
+//            guard let data = responseData,
+//                  let image = UIImage(data: data),
+//                  let response = urlResponse as? HTTPURLResponse,
+//                  response.statusCode >= 200 && response.statusCode < 300 else {
+//                completionHandler(nil, URLError(.badURL))
+//                return
+//            }
+//            completionHandler(image, nil)
+            
+            if let image = self?.handleResponse(responseData: responseData, urlResponse: urlResponse) {
+                completionHandler(image, nil)
             }
-            completionHandler(image, nil)
+            completionHandler(nil, responseError)
         }
         .resume()
     }
     
     func downloadUsingCombine() -> AnyPublisher<UIImage?, Error> {
+//        URLSession.shared.dataTaskPublisher(for: imageURL)
+//            .map({ (data, response) in
+//                UIImage(data: data)
+//            })
+//            .mapError({ $0 })
+//            .eraseToAnyPublisher()
+        
+//        Wonderful way of handling response directly using func does not have to individually handle response.
         URLSession.shared.dataTaskPublisher(for: imageURL)
-            .map({ (data, response) in
-                UIImage(data: data)
-            })
+            .map(handleResponse)
             .mapError({ $0 })
             .eraseToAnyPublisher()
     }
