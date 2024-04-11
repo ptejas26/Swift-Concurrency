@@ -85,7 +85,7 @@ final class DoTryCatchThrowsViewModel: ObservableObject {
                 print("Setting title 4")
             }
             
-            // This will execute even if the getTitle4 is throwing error, because it is marked as try? 
+            // This will execute even if the getTitle4 is throwing error, because it is marked as try?
             let title5 = try manager.getTitle5()
             self.title = title5 ?? "NA"
             print("Setting title 5")
