@@ -11,7 +11,7 @@ class TaskBootcampViewModel: ObservableObject {
     @Published var image: UIImage? = nil
     @Published var image2: UIImage? = nil
     
-    func fetchImage() async {
+    func fetchImage() async throws {
         try? await Task.sleep(seconds: 5)
         do {
             
@@ -23,7 +23,6 @@ class TaskBootcampViewModel: ObservableObject {
                 self.image  = UIImage(data: data)
                 print("Image Returned and set to view")
             }
-            
         } catch {
             print(error.localizedDescription)
         }
@@ -77,10 +76,16 @@ struct ContentView: View {
             }
         }
         .padding()
-        // this task does the same thing of handling `onAppear` and `onDisAppear` functionality
-        // it does fetchImage on appear and handles the cancel on the disappear
+        /// this task does the same thing of handling `onAppear` and `onDisAppear` functionality
+        /// it does fetchImage on appear and handles the cancel on the disappear
+        /// ANOTHER IMPORTANT THING TO NOTE HERE IS:
+        /// Task once cancelled does not necessarily cancels the operation, it may still be doing
+        /// some work, so you should ideally check for cancellation on a casual basis
+        /// https://developer.apple.com/documentation/swift/task
+        /// ``` for item in [1, 3, 5, 6, 90] { try await Task.checkCancellation() }```
+        ///
         .task {
-            await viewModel.fetchImage()
+            try? await viewModel.fetchImage()
         }
 //        .onAppear {
 //            self.fetchImageTask = Task {
