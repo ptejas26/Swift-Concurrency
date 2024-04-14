@@ -39,7 +39,7 @@ final class UsingAsyncAwaitViewModel: ObservableObject {
             self.dataArray.append(author1)
         }
         /// Sometime the async tasks will jump on background thread and sometimes not.
-        try? await doSomething() // Task.sleep(nanoseconds: 3_000_000_000)
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
         let author2 = "Author2: \(Thread.current)"
         
         await MainActor.run {
@@ -48,10 +48,21 @@ final class UsingAsyncAwaitViewModel: ObservableObject {
             let author3 = "Author3: \(Thread.current)"
             self.dataArray.append(author3)
         }
+        try? await doSomething()
     }
     
     func doSomething() async throws {
-        print("doSomething")
+        print("doSomething is called on \(Thread.current)")
+        
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
+        let something1 = "Something1 : \(Thread.current)"
+        await MainActor.run(body: {
+            self.dataArray.append(something1)
+            
+            let something2 = "Something2 : \(Thread.current)"
+            self.dataArray.append(something2)
+        })
+        
     }
 }
 
@@ -69,6 +80,9 @@ struct ContentView: View {
         .onAppear {
             Task {
                await viewModel.addAuthor1()
+                
+                let finalText = "FINAL TEXT : \(Thread.current)"
+                viewModel.dataArray.append(finalText)
             }
 //            viewModel.addTitle1()
 //            viewModel.addTitle2()
