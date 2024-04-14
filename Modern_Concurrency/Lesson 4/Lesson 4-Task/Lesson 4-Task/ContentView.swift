@@ -77,14 +77,19 @@ struct ContentView: View {
             }
         }
         .padding()
-        .onAppear {
-            self.fetchImageTask = Task {
-                
-                print(Thread.current)
-                print(Task.currentPriority)
-                print(Task.currentPriority.rawValue)
-                await viewModel.fetchImage()
-            }
+        // this task does the same thing of handling `onAppear` and `onDisAppear` functionality
+        // it does fetchImage on appear and handles the cancel on the disappear
+        .task {
+            await viewModel.fetchImage()
+        }
+//        .onAppear {
+//            self.fetchImageTask = Task {
+//
+//                print(Thread.current)
+//                print(Task.currentPriority)
+//                print(Task.currentPriority.rawValue)
+//                await viewModel.fetchImage()
+//            }
 //            Task {
 //                print(Thread.current)
 //                print(Task.currentPriority)
@@ -146,10 +151,10 @@ struct ContentView: View {
 //                    print(Task.currentPriority.rawValue)
 //                }
 //            }
-        }
-        .onDisappear {
-            fetchImageTask?.cancel()
-        }
+//        }
+//        .onDisappear {
+//            fetchImageTask?.cancel()
+//        }
     }
 }
 
