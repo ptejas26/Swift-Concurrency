@@ -11,7 +11,7 @@ import SwiftUI
 struct Lesson_4_TaskApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TaskBookcampHomeView()
         }
     }
 }
