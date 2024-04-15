@@ -17,13 +17,38 @@ class TaskGroupBootCampDataManager {
         do {
             let (img1, img2) = await(try fetchImg1, try fetchImg2)
             return [img1, img2]
-            //            if
-            //            } else {
-            //                throw URLError(.badServerResponse)
-            //            }
         } catch {
-            throw error
             print("Error occured \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    
+    func fetchImageWithTaskGroup() async throws -> [UIImage?] {
+        return try await withThrowingTaskGroup(of: UIImage.self) { [weak self] group in
+            var images: [UIImage] = []
+            
+            guard let url = self?.url, let self else {
+                return []
+            }
+            
+            group.addTask {
+                do {
+                    let imge = try await self.fetchImages(urlString: url)
+                    return imge
+                } catch {
+                    throw error
+                }
+            }
+            
+            group.addTask {
+                try await self.fetchImages(urlString: url)
+            }
+            
+            for try await image in group {
+                images.append(image)
+            }
+            return images
         }
     }
     
@@ -51,12 +76,19 @@ class TaskGroupBootCampViewModel: ObservableObject {
     
     func getImages() async throws {
         
+//        do {
+//            if let images = try await manager.fetchImageWithAsyncLet() {
+//                self.images.append(contentsOf: images)
+//            } else {
+//                throw URLError(.cancelled)
+//            }
+//        } catch {
+//            throw error
+//        }
+        
         do {
-            if let images = try await manager.fetchImageWithAsyncLet() {
-                self.images.append(contentsOf: images)
-            } else {
-                throw URLError(.cancelled)
-            }
+            let images = try await manager.fetchImageWithTaskGroup()
+            self.images = images.compactMap { $0 }
         } catch {
             throw error
         }
