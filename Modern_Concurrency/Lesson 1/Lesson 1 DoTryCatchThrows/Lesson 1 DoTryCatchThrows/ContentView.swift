@@ -49,6 +49,19 @@ final class DoTryCatchThrowDataManager {
             throw URLError(.backgroundSessionRequiresSharedContainer)
         }
     }
+    
+    typealias CompletionBlock = (Int) throws ->  Int
+    func getTitle6(intValue: Int, completionBlock: ((Int) throws -> Int)?) rethrows -> Int? {
+        do {
+            if let value = try completionBlock?(intValue) {
+                return value
+            }
+            throw URLError(.badURL)
+        } catch {
+            
+        }
+        return nil
+    }
 }
 
 final class DoTryCatchThrowsViewModel: ObservableObject {
@@ -89,6 +102,13 @@ final class DoTryCatchThrowsViewModel: ObservableObject {
             let title5 = try manager.getTitle5()
             self.title = title5 ?? "NA"
             print("Setting title 5")
+            
+//            let normalTitle = manager.getTitle6(intValue: 4, completionBlock: <#T##DoTryCatchThrowDataManager.CompletionBlock?##DoTryCatchThrowDataManager.CompletionBlock?##(Int) throws -> Int#>)
+                //Optional<() throws -> Int>
+            let normalTitle = try manager.getTitle6(intValue: 5) { value throws -> Int in
+                return 51 + value
+            }
+            print(normalTitle)
         } catch {
             self.title = error.localizedDescription
         }
