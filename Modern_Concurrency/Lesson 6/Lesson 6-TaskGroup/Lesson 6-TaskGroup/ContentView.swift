@@ -52,6 +52,43 @@ class TaskGroupBootCampDataManager {
         }
     }
     
+    enum SelfError: Error {
+        case selfIsNil
+    }
+    
+    func fetchImagesWithTaskGroupUsingForLoop() async throws -> [UIImage] {
+        let imgArray = [
+            "https://picsum.photos/200",
+            "https://picsum.photos/200",
+            "https://picsum.photos/200",
+            "https://picsum.photos/200",
+            "https://picsum.photos/200",
+            "https://picsum.photos/200",
+            "https://picsum.photos/200"
+        ]
+        
+        return try await withThrowingTaskGroup(of: UIImage.self, body: { [weak self] group in
+            var images: [UIImage] = []
+            images.reserveCapacity(imgArray.count)
+            
+            guard let self else {
+                throw SelfError.selfIsNil
+            }
+            
+            for imgURL in imgArray {
+                group.addTask {
+                    try await self.fetchImages(urlString: imgURL)
+                }
+            }
+            
+            for try await image in group {
+                images.append(image)
+            }
+            
+            return images
+        })
+    }
+    
     func fetchImages(urlString: String) async throws -> UIImage {
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
@@ -86,8 +123,15 @@ class TaskGroupBootCampViewModel: ObservableObject {
 //            throw error
 //        }
         
+//        do {
+//            let images = try await manager.fetchImageWithTaskGroup()
+//            self.images = images.compactMap { $0 }
+//        } catch {
+//            throw error
+//        }
+        
         do {
-            let images = try await manager.fetchImageWithTaskGroup()
+            let images = try await manager.fetchImagesWithTaskGroupUsingForLoop()
             self.images = images.compactMap { $0 }
         } catch {
             throw error
