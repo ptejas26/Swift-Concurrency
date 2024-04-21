@@ -29,6 +29,32 @@ class CheckedContinuationDataManager {
             }.resume()
         }
     }
+    
+    /// This function simulates a network call from an SDK that only supports legacy completion hander and does not support async await
+    /// - Parameter completionHandler:
+    private func getHeartImage(completionHandler: @escaping (UIImage, Error?) -> ()) {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            let image = UIImage(systemName: "heart.fill")
+            completionHandler(image!, nil)
+        }
+    }
+    
+    func getHeartImageAsync() async throws -> UIImage {
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self else {
+                return
+            }
+            self.getHeartImage { image, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: image)
+                }
+            }
+        }
+    }
+
 }
 
 final class CheckedContinuationViewModel: ObservableObject {
@@ -38,6 +64,13 @@ final class CheckedContinuationViewModel: ObservableObject {
     
     func getImageFromServer() async throws {
         let image = try await dataManager.fetchImagesUsingContinuation()
+        await MainActor.run {
+            self.image = image
+        }
+    }
+    
+    func getImageFromDataBase() async throws {
+        let image = try await dataManager.getHeartImageAsync()
         await MainActor.run {
             self.image = image
         }
@@ -58,7 +91,8 @@ struct ContentView: View {
             }
         }
         .task {
-            try? await viewModel.getImageFromServer()
+//            try? await viewModel.getImageFromServer()
+            try? await viewModel.getImageFromDataBase()
         }
         .padding()
     }
