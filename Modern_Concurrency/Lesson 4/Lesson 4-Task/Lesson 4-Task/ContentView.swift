@@ -84,79 +84,79 @@ struct ContentView: View {
         /// https://developer.apple.com/documentation/swift/task
         /// ``` for item in [1, 3, 5, 6, 90] { try await Task.checkCancellation() }```
         ///
-        .task {
-            try? await viewModel.fetchImage()
-        }
-//        .onAppear {
-//            self.fetchImageTask = Task {
-//
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//                await viewModel.fetchImage()
-//            }
-//            Task {
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//                await viewModel.fetchImage2()
-//            }
-            
-//            Task(priority: .high) {
-//                await Task.yield()
-//                print("high")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//
-//            }
-//            Task(priority: .medium) {
-//                print("medium")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//            }
-//            Task(priority: .low) {
-//                print("low")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//            }
-//            Task(priority: .background) {
-//                print("background")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//            }
-//
-//            Task(priority: .utility) {
-//                print("utility")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//            }
-//            Task(priority: .userInitiated) {
-//                print("userInitiated")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-//            }
-//            Task {
-//                print("Parent")
-//                print(Thread.current)
-//                print(Task.currentPriority)
-//                print(Task.currentPriority.rawValue)
-
-                // Task.detached is the child task that inherits the priority from the parent task.
-                // If the priority of the parent task is not specified, the child task will
-//                Task.detached {
-//                    print("detached")
-//                    print(Thread.current)
-//                    print(Task.currentPriority)
-//                    print(Task.currentPriority.rawValue)
-//                }
-//            }
+//        .task {
+//            try? await viewModel.fetchImage()
 //        }
+        .onAppear {
+            self.fetchImageTask = Task {
+
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+//                await viewModel.fetchImage()
+            }
+            Task {
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+                await viewModel.fetchImage2()
+            }
+            
+            Task(priority: .high) {
+                await Task.yield()
+                print("high")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+
+            }
+            Task(priority: .medium) {
+                print("medium")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+            }
+            Task(priority: .low) {
+                print("low")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+            }
+            Task(priority: .background) {
+                print("background")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+            }
+
+            Task(priority: .utility) {
+                print("utility")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+            }
+            Task(priority: .userInitiated) {
+                print("userInitiated")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+            }
+            Task {
+                print("Parent")
+                print(Thread.current)
+                print(Task.currentPriority)
+                print(Task.currentPriority.rawValue)
+
+//                 Task.detached is the child task that inherits the priority from the parent task.
+//                 If the priority of the parent task is not specified, the child task will
+                Task.detached {
+                    print("detached")
+                    print(Thread.current)
+                    print(Task.currentPriority)
+                    print(Task.currentPriority.rawValue)
+                }
+            }
+        }
 //        .onDisappear {
 //            fetchImageTask?.cancel()
 //        }
