@@ -119,8 +119,11 @@ struct HomeActorView: View {
                 .font(.headline)
         }
         .onAppear {
-           // await MyActorDataManger.instance.data
-           /// Above can be only used from asynchronous environment
+            // Task {
+               // await MyActorDataManger.instance.data
+               /// Above can be only used from asynchronous environment
+            // }
+            // No need for the below code to be wrapped up in `Task` because it is marked nonisolated 
             print(MyActorDataManger.instance.myName)
             print(MyActorDataManger.instance.getName())
         }
