@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+// Global actor declaration only works with @globalActor and
+// therefore it does need to have shared instance
+// of the Actor to which any method or property needs to be
+// isolated to.
 @globalActor struct MyFirstGlobalActor {
     static var shared = MyNewDataManager()
 }
@@ -49,6 +53,12 @@ class GlobalActorBootCampViewModel: ObservableObject {
     @MainActor @Published var dataArray: [String] = []
     let manager = MyFirstGlobalActor.shared
 
+
+    // After marking below line to the function
+    // the function is isolated to the FirstGlobalActor
+    // though it is a part of a class it is still isolated to the
+    // `Actor`
+    @MyFirstGlobalActor
     func getData() async {
         let data = await manager.getDataFromDatabase()
 
